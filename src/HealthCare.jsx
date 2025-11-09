@@ -6,6 +6,7 @@ const HealthCare = () => {
   const [currentAccountAddress, setCurrentAccountAddress] = useState("");
   const [authorizeUser, setAuthorizeUser] = useState("");
   const [smartContract, setSmartContract] = useState("");
+  const [showCopied, setShowCopied] = useState(false);
   const [patientId, setPatientId] = useState();
   const [patientName, setpatientName] = useState("");
   const [patientDiagnosis, setpatientDiagnosis] = useState("");
@@ -263,7 +264,18 @@ const HealthCare = () => {
       <h1 className="title">HealthCare Application</h1>
       {currentAccountAddress && (
         <p className="account-info">
-          Connected Account: {currentAccountAddress}{" "}
+          Connected Account: {currentAccountAddress}
+          <button
+            className="copy-button"
+            onClick={() => {
+              navigator.clipboard.writeText(currentAccountAddress);
+              setShowCopied(true);
+              setTimeout(() => setShowCopied(false), 2000);
+            }}
+            title="Copy Address"
+          >
+            {showCopied ? "Copied! ✓" : "📋"}
+          </button>
         </p>
       )}
       {isOwner && <p className="owner-info">You are the contract owner</p>}
@@ -330,22 +342,33 @@ const HealthCare = () => {
         </button>
       </div>
 
-      {
+      {allRecord.length > 0 && (
         <div className="records-section">
           <h2>Patient Records</h2>
           {allRecord.map((record, index) => (
             <div key={index}>
-              <p>Record ID: {record.record_id}</p>
-              <p>Diagnosis: {record.diagnosis}</p>
-              <p>Treatment: {record.treatment}</p>
+              <p>Record #{record.record_id.toString()}</p>
               <p>
-                Timestamp:{" "}
-                {new Date(Number(record.timestamp) * 1000).toLocaleString()}
+                <strong>Patient:</strong> {record.patient_name}
+              </p>
+              <p>
+                <strong>Diagnosis:</strong> {record.diagnosis}
+              </p>
+              <p>
+                <strong>Treatment:</strong> {record.treatment}
+              </p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(Number(record.timestamp) * 1000).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Time:</strong>{" "}
+                {new Date(Number(record.timestamp) * 1000).toLocaleTimeString()}
               </p>
             </div>
           ))}
         </div>
-      }
+      )}
     </div>
   );
 };
